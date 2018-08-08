@@ -1,23 +1,60 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { HubConnectionBuilder } from '@aspnet/signalr'
 
-const Home = props => (
-  <div>
-    <h1>Hello, world!</h1>
-    <p>Welcome to your new single-page application, built with:</p>
-    <ul>
-      <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for cross-platform server-side code</li>
-      <li><a href='https://facebook.github.io/react/'>React</a> and <a href='https://redux.js.org/'>Redux</a> for client-side code</li>
-      <li><a href='http://getbootstrap.com/'>Bootstrap</a> for layout and styling</li>
-    </ul>
-    <p>To help you get started, we've also set up:</p>
-    <ul>
-      <li><strong>Client-side navigation</strong>. For example, click <em>Counter</em> then <em>Back</em> to return here.</li>
-      <li><strong>Development server integration</strong>. In development mode, the development server from <code>create-react-app</code> runs in the background automatically, so your client-side resources are dynamically built on demand and the page refreshes when you modify any file.</li>
-      <li><strong>Efficient production builds</strong>. In production mode, development-time features are disabled, and your <code>dotnet publish</code> configuration produces minified, efficiently bundled JavaScript files.</li>
-    </ul>
-    <p>The <code>ClientApp</code> subdirectory is a standard React application based on the <code>create-react-app</code> template. If you open a command prompt in that directory, you can run <code>npm</code> commands such as <code>npm test</code> or <code>npm install</code>.</p>
-  </div>
-);
+let connection = new HubConnectionBuilder()
+  .withUrl("/chatHub")
+  .build();
 
-export default connect()(Home);
+class Home extends Component {
+  state = {}
+
+  componentDidMount() {
+    connection.start().then(() => console.log("connection started!")).catch(err => console.log(err))
+    connection.on("ReceiveMessage", (user, message) => {
+      const msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const encodedMsg = user + " says " + msg;
+      const li = document.createElement("li");
+      li.textContent = encodedMsg;
+      document.getElementById("messagesList").appendChild(li);
+      console.log(user + ": " + message);
+    });
+  }
+
+  sendMessage = (e) => {
+    const user = document.getElementById("userInput").value;
+    const message = document.getElementById("messageInput").value;
+    connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+    e.preventDefault();
+  }
+
+  render() {
+    return (
+      <div className="container">
+        <div className="row">&nbsp;</div>
+        <div className="row">
+          <div className="col-6">&nbsp;</div>
+          <div className="col-6">
+            User..........<input type="text" id="userInput" />
+            <br />
+            Message...<input type="text" id="messageInput" />
+            <input type="button" id="sendButton" onClick={this.sendMessage} value="Send Message" />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <hr />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-6">&nbsp;</div>
+          <div className="col-6">
+            <ul id="messagesList"></ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default Home;
