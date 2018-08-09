@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using signalR_react_chat_app.Hubs;
+using signalR_react_chat_app.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace signalR_react_chat_app
 {
@@ -22,6 +24,11 @@ namespace signalR_react_chat_app
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDbContext<ChatAppContext>(opt =>
+            {
+                opt.UseNpgsql(Configuration.GetConnectionString("ChatAppConnection"));
+            });
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
