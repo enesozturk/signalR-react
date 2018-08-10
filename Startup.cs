@@ -8,6 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using signalR_react_chat_app.Hubs;
 using signalR_react_chat_app.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System;
 
 namespace signalR_react_chat_app
 {
@@ -30,6 +36,33 @@ namespace signalR_react_chat_app
                 opt.UseNpgsql(Configuration.GetConnectionString("ChatAppConnection"));
             });
 
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ChatAppContext>()
+                .AddDefaultTokenProviders();
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+            services
+               .AddAuthentication(options =>
+               {
+                   options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                   options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                   options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+               })
+               .AddJwtBearer(cfg =>
+               {
+                   cfg.RequireHttpsMetadata = false;
+                   cfg.SaveToken = true;
+                   cfg.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidIssuer = Configuration["JwtIssuer"],
+                       ValidAudience = Configuration["JwtIssuer"],
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
+                       ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                   };
+               });
+
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -40,7 +73,7 @@ namespace signalR_react_chat_app
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ChatAppContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -61,12 +94,15 @@ namespace signalR_react_chat_app
                 routes.MapHub<ChatHub>("/chatHub");
             });
 
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
+
+            dbContext.Database.EnsureCreated();
 
             app.UseSpa(spa =>
             {
