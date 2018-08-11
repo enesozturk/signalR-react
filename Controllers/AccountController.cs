@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace signalR_react_chat_app.Controllers
 {
+    [Authorize]
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
@@ -29,6 +31,8 @@ namespace signalR_react_chat_app.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<object> Login([FromBody] LoginDto model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
@@ -43,6 +47,8 @@ namespace signalR_react_chat_app.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<object> Register([FromBody] RegisterDto model)
         {
             var user = new IdentityUser
@@ -50,17 +56,31 @@ namespace signalR_react_chat_app.Controllers
                 UserName = model.Email,
                 Email = model.Email
             };
-            
+
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return await GenerateJwtToken(model.Email, user);
+                var registeredUser = new ReturnRegisteredUser
+                {
+                    Email = model.Email,
+                    Token = await GenerateJwtToken(model.Email, user)
+                };
+                return Json(registeredUser);
             }
 
             throw new ApplicationException("UNKNOWN_ERROR");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LogOff()
+        {
+            await _signInManager.SignOutAsync();
+            return Json("Your logged out.");
+        }
+
 
         private async Task<object> GenerateJwtToken(string email, IdentityUser user)
         {
@@ -104,6 +124,12 @@ namespace signalR_react_chat_app.Controllers
             [Required]
             [StringLength(100, ErrorMessage = "PASSWORD_MIN_LENGTH", MinimumLength = 6)]
             public string Password { get; set; }
+        }
+
+        public class ReturnRegisteredUser
+        {
+            public string Email { get; set; }
+            public object Token { get; set; }
         }
     }
 }
