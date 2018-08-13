@@ -63,13 +63,6 @@ namespace signalR_react_chat_app
                    };
                });
 
-
-            // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
-
             services.AddSignalR();
         }
 
@@ -88,7 +81,6 @@ namespace signalR_react_chat_app
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
 
             app.UseSignalR(routes =>
             {
@@ -104,16 +96,6 @@ namespace signalR_react_chat_app
             });
 
             dbContext.Database.EnsureCreated();
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
-            });
         }
     }
 }

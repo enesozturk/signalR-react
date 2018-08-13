@@ -24,7 +24,7 @@ class AppContainerComp extends Component {
                 <AlertDialog />
                 <div>
                     <Grid container spacing={24} style={{ padding: 24 }}>
-                        <Grid item xs={12} sm={6} lg={4} xl={3}>
+                        <Grid item xs={12} sm={6} m={4} lg={4} xl={3}>
                             {this.props.children}
                         </Grid>
                     </Grid>
