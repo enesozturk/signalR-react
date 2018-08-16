@@ -42,7 +42,7 @@ module.exports = {
     },
     plugins: [
         new BundleTracker({ path: './', filename: 'webpack-stats.json' }),
-        new LiveReloadPlugin({ port: 5001, hostname: 'localhost' }),
+        new LiveReloadPlugin({}),
     ],
     optimization: {
         minimizer: [

@@ -12,6 +12,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import Badge from '@material-ui/core/Badge';
+import MailIcon from '@material-ui/icons/Mail';
 
 const styles = {
     root: {
@@ -77,6 +79,9 @@ class NavBarComp extends React.Component {
                         <Typography variant="title" color="inherit" style={styles.flex}>
                             Photos
                         </Typography>
+                        <Badge badgeContent={4} color="primary">
+                            <MailIcon />
+                        </Badge>
                         {auth && (
                             <div>
                                 <IconButton
@@ -105,6 +110,7 @@ class NavBarComp extends React.Component {
                                 </Menu>
                             </div>
                         )}
+
                     </Toolbar>
                 </AppBar>
             </div>

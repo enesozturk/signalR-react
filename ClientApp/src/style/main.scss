@@ -12,3 +12,38 @@ html {
     transform: translate(-50%, -50%);
     border-radius: 5px;
 }
+
+.MuiBadge-colorPrimary-90 {
+    background-color: #0c1c77 !important;
+}
+
+.MuiFormControl-fullWidth-219 {
+    width: calc(100% - 150px) !important;
+}
+
+.MuiButtonBase-root-46.MuiButton-root-233.MuiButton-fab-250.MuiButton-extendedFab-251.MuiButton-contained-244.MuiButton-raised-247 {
+    background-color: #0c1c77;
+    margin-left: 25px;
+    span {
+        color: white;
+    }
+}
+
+.fromThem {
+    .MuiPaper-root-9 {
+        margin: 15px 0;
+        padding: 10px 0 10px 12px;
+        width: 300PX;
+        background: #3f51b5;
+        color: white;
+    }
+}
+
+.fromMe {
+    .MuiPaper-root-9 {
+        margin: 15px 0;
+        padding: 10px 0 10px 12px;
+        width: 300PX;
+        float: right;
+    }
+}
