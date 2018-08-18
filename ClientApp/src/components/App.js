@@ -3,8 +3,10 @@ import { Provider } from 'react-redux';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 import { store } from '../store'
 import Home from './presentational/Home';
+import Login from './presentational/Login'
 import { hot } from 'react-hot-loader'
 import { AppContainer } from './container/AppContainer'
+import SignUp from "./presentational/SignUp";
 
 export class App extends Component {
   render() {
@@ -15,6 +17,8 @@ export class App extends Component {
             <AppContainer>
               <Switch location={location}>
                 <Route exact path='/' component={Home} />
+                <Route path='/login' component={Login} />
+                <Route path='/signup' component={SignUp} />
               </Switch>
             </AppContainer>
           )}>
