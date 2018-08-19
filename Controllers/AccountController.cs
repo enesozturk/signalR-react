@@ -32,7 +32,6 @@ namespace signalR_react_chat_app.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<object> Login([FromBody] LoginDto model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
@@ -40,7 +39,16 @@ namespace signalR_react_chat_app.Controllers
             if (result.Succeeded)
             {
                 var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-                return await GenerateJwtToken(model.Email, appUser);
+                var loggedInUser = new ReturnUser
+                {
+                    Email = model.Email,
+                    Token = await GenerateJwtToken(model.Email, appUser)
+                };
+                return Json(loggedInUser);
+            }
+            else
+            {
+                return Json("yanlış kullanıcı adı veya şifre");
             }
 
             throw new ApplicationException("UNKNOWN_ERROR");
@@ -48,7 +56,6 @@ namespace signalR_react_chat_app.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<object> Register([FromBody] RegisterDto model)
         {
             var user = new IdentityUser
@@ -62,7 +69,7 @@ namespace signalR_react_chat_app.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                var registeredUser = new ReturnRegisteredUser
+                var registeredUser = new ReturnUser
                 {
                     Email = model.Email,
                     Token = await GenerateJwtToken(model.Email, user)
@@ -126,7 +133,7 @@ namespace signalR_react_chat_app.Controllers
             public string Password { get; set; }
         }
 
-        public class ReturnRegisteredUser
+        public class ReturnUser
         {
             public string Email { get; set; }
             public object Token { get; set; }

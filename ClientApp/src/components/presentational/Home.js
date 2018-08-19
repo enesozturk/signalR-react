@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { HubConnectionBuilder } from '@aspnet/signalr'
+import { HubConnectionBuilder, JsonHubProtocol } from '@aspnet/signalr'
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button';
@@ -20,11 +20,13 @@ export class Home extends Component {
     }
 
     componentDidMount() {
+        const localUserItem = localStorage.getItem('user')
         connection.start().then(() => console.log("connection started!")).catch(err => console.log(err))
         connection.on("ReceiveMessage", (user, message) => {
             const msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             const encodedMsg = msg;
-            let newMessage = { message: encodedMsg, fromThem: true, time: Date.now() }
+            const fromThemVar = localUserItem ? localUserItem.email == user ? false : true : true
+            let newMessage = { message: encodedMsg, fromThem: fromThemVar, time: Date.now() }
             this.setState({
                 messages: [...this.state.messages, newMessage]
             })
@@ -40,7 +42,8 @@ export class Home extends Component {
     }
 
     sendMessage = () => {
-        const user = "Your Name";
+        const localUserItem = localStorage.getItem('user')
+        const user = localUserItem ? localUserItem.email : "null user"
         const message = document.getElementById("full-width").value;
         connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
     }

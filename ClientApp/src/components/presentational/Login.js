@@ -10,6 +10,7 @@ import LockIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
+import request from 'superagent'
 
 const styles = theme => ({
     layout: {
@@ -43,11 +44,42 @@ const styles = theme => ({
 
 export class Login extends Component {
     state = {
+        email: "",
+        password: "",
         messages: []
     }
 
     navigate(location) {
-        console.log(location)
+        this.props.history.push(location)
+    }
+
+    handleChange = (e) => {
+        const key = e.target.name;
+        const value = e.target.value;
+
+        this.setState({
+            [key]: value
+        })
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault()
+        if (this.state.email != "", this.state.password != "") {
+            request.post('/Account/Login')
+                .send({ email: this.state.email, password: this.state.password })
+                .then(res => {
+                    if (res.ok) {
+                        localStorage.setItem('user', res.body)
+                        this.navigate('/')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+        else {
+            alert("Please, fill the inputs!")
+        }
     }
 
     render() {
@@ -64,7 +96,7 @@ export class Login extends Component {
                         <form className={classes.form}>
                             <FormControl margin="normal" required fullWidth>
                                 <InputLabel htmlFor="email">Email Address</InputLabel>
-                                <Input id="email" name="email" autoComplete="email" autoFocus />
+                                <Input id="email" name="email" onChange={this.handleChange} autoComplete="email" autoFocus />
                             </FormControl>
                             <FormControl margin="normal" required fullWidth>
                                 <InputLabel htmlFor="password">Password</InputLabel>
@@ -72,6 +104,7 @@ export class Login extends Component {
                                     name="password"
                                     type="password"
                                     id="password"
+                                    onChange={this.handleChange}
                                     autoComplete="current-password"
                                 />
                             </FormControl>
@@ -80,6 +113,7 @@ export class Login extends Component {
                                 fullWidth
                                 variant="raised"
                                 color="primary"
+                                onClick={this.handleSubmit}
                                 className={classes.submit}
                             >
                                 Sign Up

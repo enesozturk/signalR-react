@@ -16,6 +16,16 @@ const mapDispatchToProps = dispatch => ({
 })
 
 class AppContainerComp extends Component {
+    navigate(location) {
+        this.props.history.push(location)
+    }
+
+    componentDidMount() {
+        const user = localStorage.getItem('user')
+        if (!user)
+            this.navigate('/login')
+    }
+
     render() {
         return (
             <div>

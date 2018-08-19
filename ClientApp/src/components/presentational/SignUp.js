@@ -10,6 +10,7 @@ import LockIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
+import request from 'superagent'
 
 const styles = theme => ({
     layout: {
@@ -43,11 +44,40 @@ const styles = theme => ({
 
 export class SignUp extends Component {
     state = {
+        email: "",
+        password: "",
         messages: []
     }
 
     navigate(location) {
-        console.log(location)
+        this.props.history.push(location)
+    }
+
+    handleChange = (e) => {
+        const key = e.target.name;
+        const value = e.target.value;
+
+        this.setState({
+            [key]: value
+        })
+    }
+
+    handleSignUp = (e) => {
+        e.preventDefault()
+        if (this.state.email != "", this.state.password != "") {
+            const { email, password } = this.state
+            const query = { email: email, password: password }
+            request.post('/Account/Register/')
+                .send(query)
+                .then(res => {
+                    if (res.ok) {
+                        console.log(res.body)
+                        this.navigate('/login')
+                    }
+                }).catch(err => {
+                    console.log(err)
+                })
+        }
     }
 
     render() {
@@ -64,7 +94,7 @@ export class SignUp extends Component {
                         <form className={classes.form}>
                             <FormControl margin="normal" required fullWidth>
                                 <InputLabel htmlFor="email">Email Address</InputLabel>
-                                <Input id="email" name="email" autoComplete="email" autoFocus />
+                                <Input id="email" name="email" onChange={this.handleChange} autoComplete="email" autoFocus />
                             </FormControl>
                             <FormControl margin="normal" required fullWidth>
                                 <InputLabel htmlFor="password">Password</InputLabel>
@@ -72,6 +102,7 @@ export class SignUp extends Component {
                                     name="password"
                                     type="password"
                                     id="password"
+                                    onChange={this.handleChange}
                                     autoComplete="current-password"
                                 />
                             </FormControl>
@@ -81,7 +112,7 @@ export class SignUp extends Component {
                                 variant="raised"
                                 color="primary"
                                 className={classes.submit}
-                            >
+                                onClick={this.handleSignUp}>
                                 Sign Up
                             </Button>
                         </form>
