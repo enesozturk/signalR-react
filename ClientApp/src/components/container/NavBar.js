@@ -39,13 +39,17 @@ const mapDispatchToProps = dispatch => ({
 })
 
 class NavBarComp extends React.Component {
-    state = {
-        auth: true,
-        anchorEl: null,
-    };
+    constructor(props) {
+        super(props)
+        this.state = {
+            auth: true,
+            anchorEl: null,
+        }
+        this.nav = this.nav.bind(this)
+    }
 
     nav() {
-        //
+        this.props.history.push('login')
     }
 
     toggleDrawer = (open) => () => {
@@ -61,7 +65,7 @@ class NavBarComp extends React.Component {
     };
 
     handleLogout = () => {
-        this.props.openDialogModal({ open: true, title: "Log Out", content: "Are you sure want to log out?" })
+        this.props.openDialogModal({ open: true, title: "Log Out", content: "Are you sure want to log out?", onConfirm: () => { localStorage.removeItem('user'); this.nav('/login'); this.props.openDialogModal({ open: false }) } })
     };
 
     render() {
@@ -77,7 +81,7 @@ class NavBarComp extends React.Component {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="title" color="inherit" style={styles.flex}>
-                            Photos
+                            .Net Core 2.1 SignalR - React JS Chat Application
                         </Typography>
                         <Badge badgeContent={4} color="primary">
                             <MailIcon />
@@ -110,7 +114,6 @@ class NavBarComp extends React.Component {
                                 </Menu>
                             </div>
                         )}
-
                     </Toolbar>
                 </AppBar>
             </div>

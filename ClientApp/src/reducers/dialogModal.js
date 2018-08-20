@@ -11,7 +11,8 @@ export default (state = initialDialogModalState, action) => {
                 ...state,
                 open: action.payload.open,
                 title: action.payload.title,
-                content: action.payload.content
+                content: action.payload.content,
+                onConfirm: action.payload.onConfirm
             }
         default:
             return state;

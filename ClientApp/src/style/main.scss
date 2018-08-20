@@ -29,6 +29,11 @@ html {
     }
 }
 
+.messages {
+    display: flex;
+    flex-direction: column;
+}
+
 .fromThem {
     .MuiPaper-root-9 {
         margin: 15px 0;

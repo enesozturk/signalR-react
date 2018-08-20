@@ -69,7 +69,7 @@ export class Login extends Component {
                 .send({ email: this.state.email, password: this.state.password })
                 .then(res => {
                     if (res.ok) {
-                        localStorage.setItem('user', res.body)
+                        localStorage.setItem('user', JSON.stringify(res.body))
                         this.navigate('/')
                     }
                 })
@@ -116,7 +116,7 @@ export class Login extends Component {
                                 onClick={this.handleSubmit}
                                 className={classes.submit}
                             >
-                                Sign Up
+                                Log in
                             </Button>
                         </form>
                     </Paper>

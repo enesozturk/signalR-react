@@ -16,11 +16,11 @@ export class Home extends Component {
     }
 
     navigate(location) {
-        console.log(location)
+        this.props.history.push(location)
     }
 
     componentDidMount() {
-        const localUserItem = localStorage.getItem('user')
+        const localUserItem = JSON.parse(localStorage.getItem('user'))
         connection.start().then(() => console.log("connection started!")).catch(err => console.log(err))
         connection.on("ReceiveMessage", (user, message) => {
             const msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -42,7 +42,7 @@ export class Home extends Component {
     }
 
     sendMessage = () => {
-        const localUserItem = localStorage.getItem('user')
+        const localUserItem = JSON.parse(localStorage.getItem('user'))
         const user = localUserItem ? localUserItem.email : "null user"
         const message = document.getElementById("full-width").value;
         connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
