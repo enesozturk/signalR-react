@@ -48,8 +48,8 @@ class NavBarComp extends React.Component {
         this.nav = this.nav.bind(this)
     }
 
-    nav() {
-        this.props.history.push('login')
+    nav(location) {
+        this.props.history.push(location)
     }
 
     toggleDrawer = (open) => () => {
@@ -65,12 +65,16 @@ class NavBarComp extends React.Component {
     };
 
     handleLogout = () => {
-        this.props.openDialogModal({ open: true, title: "Log Out", content: "Are you sure want to log out?", onConfirm: () => { localStorage.removeItem('user'); this.nav('/login'); this.props.openDialogModal({ open: false }) } })
+        this.props.openDialogModal({ open: true, title: "Log Out", content: "Are you sure want to log out?", onConfirm: () => { localStorage.removeItem('user'); this.props.openDialogModal({ open: false }); this.nav('/login'); } })
+        this.setState({
+            anchorEl: null
+        })
     };
 
     render() {
         const { auth, anchorEl } = this.state;
         const open = Boolean(anchorEl);
+        const user = JSON.parse(localStorage.getItem('user'))
 
         return (
             <div>
@@ -83,36 +87,38 @@ class NavBarComp extends React.Component {
                         <Typography variant="title" color="inherit" style={styles.flex}>
                             .Net Core 2.1 SignalR - React JS Chat Application
                         </Typography>
-                        <Badge badgeContent={4} color="primary">
-                            <MailIcon />
-                        </Badge>
-                        {auth && (
-                            <div>
-                                <IconButton
-                                    aria-owns={open ? 'menu-appbar' : null}
-                                    aria-haspopup="true"
-                                    onClick={this.handleMenu}
-                                    color="inherit"
-                                >
-                                    <AccountCircle />
-                                </IconButton>
-                                <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    open={open}
-                                    onClose={this.handleClose}>
-                                    <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                                    <MenuItem onClick={this.handleLogout}>Log Out</MenuItem>
-                                </Menu>
-                            </div>
+                        {user && (
+                            <React.Fragment>
+                                <Badge badgeContent={4} color="primary">
+                                    <MailIcon />
+                                </Badge>
+                                <div>
+                                    <IconButton
+                                        aria-owns={open ? 'menu-appbar' : null}
+                                        aria-haspopup="true"
+                                        onClick={this.handleMenu}
+                                        color="inherit"
+                                    >
+                                        <AccountCircle />
+                                    </IconButton>
+                                    <Menu
+                                        id="menu-appbar"
+                                        anchorEl={anchorEl}
+                                        anchorOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        open={open}
+                                        onClose={this.handleClose}>
+                                        <MenuItem onClick={() => this.nav('/profile')}>Profile</MenuItem>
+                                        <MenuItem onClick={this.handleLogout}>Log Out</MenuItem>
+                                    </Menu>
+                                </div>
+                            </React.Fragment>
                         )}
                     </Toolbar>
                 </AppBar>

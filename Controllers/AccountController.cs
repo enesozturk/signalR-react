@@ -46,10 +46,6 @@ namespace signalR_react_chat_app.Controllers
                 };
                 return Json(loggedInUser);
             }
-            else
-            {
-                return Json("yanlış kullanıcı adı veya şifre");
-            }
 
             throw new ApplicationException("UNKNOWN_ERROR");
         }

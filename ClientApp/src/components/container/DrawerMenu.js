@@ -27,6 +27,10 @@ class DrawerMenuComp extends Component {
         right: false,
     };
 
+    nav(location) {
+        this.props.history.push(location)
+    }
+
     toggleDrawer = (side, open) => () => {
         this.props.drawerMenu(open)
         this.setState({
@@ -50,7 +54,7 @@ class DrawerMenuComp extends Component {
                                     <ListItemIcon>
                                         <Home />
                                     </ListItemIcon>
-                                    <ListItemText primary="Home" />
+                                    <ListItemText primary="Home" onClick={() => this.nav('/')} />
                                 </ListItem>
                             </div>
                         </List>

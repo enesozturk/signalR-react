@@ -73,9 +73,7 @@ export class Login extends Component {
                         this.navigate('/')
                     }
                 })
-                .catch(err => {
-                    console.log(err)
-                })
+                .catch(err => { console.log(err) })
         }
         else {
             alert("Please, fill the inputs!")

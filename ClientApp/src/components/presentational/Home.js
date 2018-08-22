@@ -63,7 +63,7 @@ export class Home extends Component {
                     })}
 
                 </div>
-                <form noValidate autoComplete="off" style={{ position: 'absolute', bottom: '50px', width: '100%' }}>
+                <form noValidate autoComplete="off" style={{ position: 'absolute', bottom: '0', left: '0', width: '100vw', boxSizing: 'border-box', padding: '15px' }}>
                     <TextField
                         id="full-width"
                         placeholder="Write something..."

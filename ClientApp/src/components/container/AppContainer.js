@@ -32,13 +32,11 @@ class AppContainerComp extends Component {
                 <NavBar />
                 <DrawerMenu />
                 <AlertDialog />
-                <div>
-                    <Grid container spacing={24} style={{ padding: 24 }}>
-                        <Grid item xs={12} sm={12} m={12} lg={12} xl={12}>
-                            {this.props.children}
-                        </Grid>
+                <Grid container>
+                    <Grid item xs={12}>
+                        {this.props.children}
                     </Grid>
-                </div>
+                </Grid>
             </div>
         )
     }
