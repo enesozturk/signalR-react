@@ -26,7 +26,7 @@ export class Home extends Component {
             const msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             const encodedMsg = msg;
             const fromThemVar = localUserItem ? localUserItem.email == user ? false : true : true
-            let newMessage = { message: encodedMsg, fromThem: fromThemVar, time: Date.now() }
+            let newMessage = { message: encodedMsg, fromThem: fromThemVar, user: user, time: Date.now() }
             this.setState({
                 messages: [...this.state.messages, newMessage]
             })
@@ -55,7 +55,8 @@ export class Home extends Component {
                     {this.state.messages.map((item, i) => {
                         return (
                             <div className={item.fromThem ? "fromThem" : "fromMe"}>
-                                <Paper>
+                                <Paper style={{ padding: item.fromThem ? '20px 0 10px 12px' : null }}>
+                                    <div className="fromWho">{item.fromThem ? item.user : ""}</div>
                                     <div>{item.message}</div>
                                 </Paper>
                             </div>
