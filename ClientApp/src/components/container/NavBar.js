@@ -85,7 +85,7 @@ class NavBarComp extends React.Component {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="title" color="inherit" style={styles.flex}>
-                            .Net Core 2.1 SignalR - React JS Chat Application
+                            Chat
                         </Typography>
                         {user && (
                             <React.Fragment>

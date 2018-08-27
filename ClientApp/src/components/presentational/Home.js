@@ -12,7 +12,8 @@ let connection = new HubConnectionBuilder()
 
 export class Home extends Component {
     state = {
-        messages: []
+        messages: [],
+        messageType: ""
     }
 
     navigate(location) {
@@ -33,19 +34,30 @@ export class Home extends Component {
         });
     }
 
+    handleOnChange = (e) => {
+        this.setState({
+            messageType: e.target.value
+        })
+    }
+
     handleOnKeyDown = (e) => {
-        if (e.key == 'Enter' && e.target.value != "") {
+        if (e.key == 'Enter') {
             this.sendMessage()
-            e.target.value = ""
-            e.preventDefault()
         }
     }
 
     sendMessage = () => {
-        const localUserItem = JSON.parse(localStorage.getItem('user'))
-        const user = localUserItem ? localUserItem.email : "null user"
-        const message = document.getElementById("full-width").value;
-        connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+        const message = this.state.messageType
+        if (message != "") {
+            const localUserItem = JSON.parse(localStorage.getItem('user'))
+            const user = localUserItem ? localUserItem.email : "null user"
+            connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+
+            this.setState({
+                messageType: ""
+            })
+        }
+
     }
 
     render() {
@@ -70,6 +82,8 @@ export class Home extends Component {
                         placeholder="Write something..."
                         fullWidth
                         margin="normal"
+                        value={this.state.messageType}
+                        onChange={this.handleOnChange}
                         onKeyDown={this.handleOnKeyDown}
                     />
                     <Button variant="extendedFab" aria-label="send" onClick={() => this.sendMessage()}>
